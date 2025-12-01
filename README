@@ -1,0 +1,14 @@
+Prezado monitor: para fazer a aplicação do código, basta colar na IDE o arquivo completo chamado index.html e rodar com live server.
+
+Funcionalidades:
+ -Adicionar novas tarefas com campo de entrada intuitivo
+ -Marcar/Desmarcar tarefas como concluídas com efeito visual
+ -Editar tarefas existentes diretamente na lista
+ -Excluir tarefas individualmente
+ -Filtros inteligentes (Todas, Pendentes, Concluídas)
+ -Estatísticas em tempo real (Total, Pendentes, Concluídas)
+ -Limpar todas as tarefas com confirmação
+ -Persistência de dados usando Local Storage
+ -Design responsivo para mobile e desktop
+ -Interface moderna com botões arredondados e gradientes
+- Animações suaves e feedback visual
