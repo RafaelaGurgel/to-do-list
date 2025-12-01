@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Lista de Tarefas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #11cb5f 0%, #2575fc 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background-color: #f0f4ff;
+            padding: 15px 30px;
+            border-bottom: 1px solid #e1e5eb;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #fc25df;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .add-todo-form {
+            padding: 25px 30px;
+            border-bottom: 1px solid #e1e5eb;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .todo-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e1e5eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .todo-input:focus {
+            border-color: #2575fc;
+            outline: none;
+        }
+        
+        
+        .add-btn {
+            background-color: #2575fc;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        
+        .add-btn:hover {
+            background-color: #1a68e8;
+            transform: scale(1.05);
+        }
+        
+        .todo-controls {
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            background-color: #f9fafc;
+            border-bottom: 1px solid #e1e5eb;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        /* Botões de Filtro - Redondos */
+        .filter-btn {
+            padding: 8px 15px;
+            background-color: #e1e5eb;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .filter-btn.active {
+            background-color: #2575fc;
+            color: white;
+            border-radius: 25px;
+        }
+        
+        
+        .clear-btn {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 40px;
+        }
+        
+        .clear-btn:hover {
+            background-color: #ff3742;
+            transform: scale(1.05);
+        }
+        
+        .todo-list {
+            padding: 0;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .todo-item {
+            display: flex;
+            align-items: center;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e1e5eb;
+            transition: background-color 0.3s;
+        }
+        
+        .todo-item:hover {
+            background-color: #f9fafc;
+        }
+        
+        .todo-checkbox {
+            width: 24px;
+            height: 24px;
+            margin-right: 15px;
+            cursor: pointer;
+            border-radius: 50%;
+        }
+        
+        .todo-text {
+            flex: 1;
+            font-size: 1.1rem;
+        }
+        
+        .todo-text.completed {
+            text-decoration: line-through;
+            color: #999;
+        }
+        
+        .todo-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .todo-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+        
+        .edit-btn {
+            color: #2ed573;
+            background-color: rgba(46, 213, 115, 0.1);
+        }
+        
+        .edit-btn:hover {
+            background-color: rgba(46, 213, 115, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .delete-btn {
+            color: #ff4757;
+            background-color: rgba(255, 71, 87, 0.1);
+        }
+        
+        .delete-btn:hover {
+            background-color: rgba(255, 71, 87, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 30px;
+            color: #999;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #e1e5eb;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .save-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #2ed573;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .filter-btn[data-filter="all"] {
+            border-radius: 25px 8px 8px 25px;
+        }
+        
+        .filter-btn[data-filter="pending"] {
+            border-radius: 8px;
+        }
+        
+        .filter-btn[data-filter="completed"] {
+            border-radius: 8px 25px 25px 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 0;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+            
+            .add-btn {
+                width: 100%;
+                border-radius: 8px;
+                height: 50px;
+            }
+            
+            .todo-controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .filter-buttons {
+                justify-content: center;
+            }
+            
+            .todo-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .todo-actions {
+                align-self: flex-end;
+            }
+            
+            /* Ajustes para mobile */
+            .filter-btn {
+                flex: 1;
+                border-radius: 25px !important;
+            }
+            
+            .clear-btn {
+                width: 100%;
+                border-radius: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-clipboard-list"></i> Lista de Tarefas</h1>
+            <p class="subtitle">Gerencie aqui suas tarefas!</p>
+        </header>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="total-tasks">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="pending-tasks">0</div>
+                <div class="stat-label">Pendentes</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="completed-tasks">0</div>
+                <div class="stat-label">Concluídas</div>
+            </div>
+        </div>
+        
+        <form class="add-todo-form" id="todo-form">
+            <div class="input-group">
+                <input type="text" class="todo-input" id="todo-input" placeholder="Adicione uma nova tarefa..." required>
+                <button type="submit" class="add-btn" title="Adicionar tarefa">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+        </form>
+        
+        <div class="todo-controls">
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all" title="Mostrar todas as tarefas">
+                    <i class="fas fa-list"></i>
+                </button>
+                <button class="filter-btn" data-filter="pending" title="Mostrar apenas pendentes">
+                    <i class="fas fa-clock"></i>
+                </button>
+                <button class="filter-btn" data-filter="completed" title="Mostrar apenas concluídas">
+                    <i class="fas fa-check"></i>
+                </button>
+            </div>
+            <button class="clear-btn" id="clear-all" title="Limpar todas as tarefas">
+                <i class="fas fa-list-check"></i>
+                <span>Limpar Todas</span>
+            </button>
+        </div>
+        
+        <ul class="todo-list" id="todo-list"></ul>
+        
+        <div class="empty-state" id="empty-state">
+            <i class="fas fa-clipboard-list"></i>
+            <h3>Nenhuma tarefa encontrada</h3>
+            <p>Adicione uma nova tarefa para começar</p>
+        </div>
+    </div>
+    
+    <div class="save-notification" id="save-notification">
+        <i class="fas fa-check-circle"></i>
+        <span>Tarefas salvas com sucesso!</span>
+    </div>
+
+    <script>
+        const todoForm = document.getElementById('todo-form');
+        const todoInput = document.getElementById('todo-input');
+        const todoList = document.getElementById('todo-list');
+        const emptyState = document.getElementById('empty-state');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const clearAllButton = document.getElementById('clear-all');
+        const saveNotification = document.getElementById('save-notification');
+        
+        const totalTasksElement = document.getElementById('total-tasks');
+        const pendingTasksElement = document.getElementById('pending-tasks');
+        const completedTasksElement = document.getElementById('completed-tasks');
+        
+        let todos = [];
+        let currentFilter = 'all';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarTarefas();
+            atualizarEstatisticas();
+            renderizarTarefas();
+            
+            todoForm.addEventListener('submit', adicionarTarefa);
+            clearAllButton.addEventListener('click', limparTodasTarefas);
+            
+            filterButtons.forEach(botao => {
+                botao.addEventListener('click', () => {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    botao.classList.add('active');
+                    currentFilter = botao.getAttribute('data-filter');
+                    renderizarTarefas();
+                });
+            });
+        });
+        
+        function carregarTarefas() {
+            const tarefasSalvas = localStorage.getItem('tarefas');
+            if (tarefasSalvas) {
+                todos = JSON.parse(tarefasSalvas);
+            }
+        }
+        
+        function salvarTarefas() {
+            localStorage.setItem('tarefas', JSON.stringify(todos));
+            mostrarNotificacao();
+        }
+        
+        function mostrarNotificacao() {
+            saveNotification.style.display = 'flex';
+            setTimeout(() => {
+                saveNotification.style.display = 'none';
+            }, 2000);
+        }
+        
+        function atualizarEstatisticas() {
+            const total = todos.length;
+            const completas = todos.filter(tarefa => tarefa.completed).length;
+            const pendentes = total - completas;
+            
+            totalTasksElement.textContent = total;
+            completedTasksElement.textContent = completas;
+            pendingTasksElement.textContent = pendentes;
+        }
+        
+        function adicionarTarefa(e) {
+            e.preventDefault();
+            
+            const texto = todoInput.value.trim();
+            if (texto === '') return;
+            
+            const novaTarefa = {
+                id: Date.now(),
+                text: texto,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            todos.push(novaTarefa);
+            salvarTarefas();
+            atualizarEstatisticas();
+            renderizarTarefas();
+            
+            todoInput.value = '';
+            todoInput.focus();
+        }
+        
+        function renderizarTarefas() {
+            todoList.innerHTML = '';
+            
+            let tarefasFiltradas = [];
+            if (currentFilter === 'all') {
+                tarefasFiltradas = todos;
+            } else if (currentFilter === 'pending') {
+                tarefasFiltradas = todos.filter(tarefa => !tarefa.completed);
+            } else if (currentFilter === 'completed') {
+                tarefasFiltradas = todos.filter(tarefa => tarefa.completed);
+            }
+            
+            if (tarefasFiltradas.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            
+            tarefasFiltradas.forEach(tarefa => {
+                const itemTarefa = document.createElement('li');
+                itemTarefa.className = 'todo-item';
+                itemTarefa.dataset.id = tarefa.id;
+                
+                itemTarefa.innerHTML = `
+                    <input type="checkbox" class="todo-checkbox" ${tarefa.completed ? 'checked' : ''}>
+                    <span class="todo-text ${tarefa.completed ? 'completed' : ''}">${tarefa.text}</span>
+                    <div class="todo-actions">
+                        <button class="edit-btn" title="Editar tarefa">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-btn" title="Excluir tarefa">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                `;
+                
+                const checkbox = itemTarefa.querySelector('.todo-checkbox');
+                checkbox.addEventListener('change', () => alternarConclusao(tarefa.id));
+                
+                const botaoEditar = itemTarefa.querySelector('.edit-btn');
+                botaoEditar.addEventListener('click', () => editarTarefa(tarefa.id));
+                
+                const botaoExcluir = itemTarefa.querySelector('.delete-btn');
+                botaoExcluir.addEventListener('click', () => excluirTarefa(tarefa.id));
+                
+                todoList.appendChild(itemTarefa);
+            });
+        }
+        
+        function alternarConclusao(id) {
+            const indice = todos.findIndex(tarefa => tarefa.id === id);
+            if (indice !== -1) {
+                todos[indice].completed = !todos[indice].completed;
+                salvarTarefas();
+                atualizarEstatisticas();
+                renderizarTarefas();
+            }
+        }
+        
+        function editarTarefa(id) {
+            const indice = todos.findIndex(tarefa => tarefa.id === id);
+            if (indice === -1) return;
+            
+            const textoAtual = todos[indice].text;
+            const novoTexto = prompt('Editar tarefa:', textoAtual);
+            
+            if (novoTexto !== null && novoTexto.trim() !== '') {
+                todos[indice].text = novoTexto.trim();
+                salvarTarefas();
+                renderizarTarefas();
+            }
+        }
+        
+        function excluirTarefa(id) {
+            if (confirm('Tem certeza que deseja excluir esta tarefa?')) {
+                todos = todos.filter(tarefa => tarefa.id !== id);
+                salvarTarefas();
+                atualizarEstatisticas();
+                renderizarTarefas();
+            }
+        }
+        
+        function limparTodasTarefas() {
+            if (todos.length === 0) return;
+            
+            if (confirm('Tem certeza que deseja excluir todas as tarefas?')) {
+                todos = [];
+                salvarTarefas();
+                atualizarEstatisticas();
+                renderizarTarefas();
+            }
+        }
+    </script>
+</body>
+</html>
